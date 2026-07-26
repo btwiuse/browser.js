@@ -219,7 +219,8 @@ function hashDomain(domain: string): string {
 
 let nonIsolatedController: Controller | null;
 
-const ISOLATION_ORIGIN = import.meta.env.VITE_ISOLATION_ORIGIN;
+const ISOLATION_ORIGIN =
+	import.meta.env.VITE_ISOLATION_ORIGIN || window.location.origin;
 
 let controllerWaitPromises: Map<Window, (v: unknown) => void> = new Map();
 addEventListener("message", (e) => {
