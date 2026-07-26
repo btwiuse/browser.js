@@ -1,0 +1,15 @@
+--- a/rollup.plugins.ts
++++ b/rollup.plugins.ts
+@@ -1,3 +1,11 @@
+ import MagicString from "magic-string";
++
++// @ts-ignore
++if (!RegExp.escape) {
++	// @ts-ignore
++	RegExp.escape = function (s: string) {
++		return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
++	};
++}
+ 
+ export const propertyHoister = () => {
+ 	return {

@@ -12,7 +12,9 @@ FROM node:22 AS builder
 WORKDIR /app
 COPY . .
 COPY --from=rewriter-builder /app/packages/scramjet/packages/core/dist/scramjet.wasm packages/scramjet/packages/core/dist/scramjet.wasm
-RUN git submodule update --init --recursive
+RUN git clone https://github.com/MercuryWorkshop/dreamlandjs.git external/dreamlandjs
+COPY dreamland.patch /tmp/dreamland.patch
+RUN cd external/dreamlandjs && git apply /tmp/dreamland.patch
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install
 RUN pnpm build
