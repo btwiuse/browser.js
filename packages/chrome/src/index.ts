@@ -1,5 +1,6 @@
 // this needs to be first
 import "./sentry.tsx";
+import "./pwaInstall.ts";
 
 import "./reset.css";
 import "./style.css";

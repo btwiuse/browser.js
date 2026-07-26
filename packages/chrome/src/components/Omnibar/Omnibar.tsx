@@ -12,6 +12,7 @@ import {
 	iconInfo,
 	iconSettings,
 	iconError,
+	iconDesktop,
 } from "../../icons";
 import { createMenu, createMenuCustom } from "@components/Menu";
 import { OmnibarButton } from "@components/Omnibar/OmnibarButton";
@@ -27,6 +28,7 @@ import { CircularProgress } from "@components/Omnibar/CircularProgress";
 import { ReportBrokenSiteModal } from "@components/ReportBrokenSiteModal";
 import { INTERNAL_URL_PROTOCOL } from "../../consts";
 import { TabStrip } from "@components/TabStrip/TabStrip";
+import { canPromptPwaInstall, promptPwaInstall } from "../../pwaInstall";
 
 export const animateDownloadFly = createDelegate<void>();
 export const showDownloadsPopup = createDelegate<void>();
@@ -213,6 +215,18 @@ export function Omnibar(
 								},
 								icon: iconDownload,
 							},
+							...(canPromptPwaInstall()
+								? [
+										{
+											label: "Install Browser.js",
+											action: () => {
+												void promptPwaInstall();
+											},
+											icon: iconDesktop,
+										},
+										"-",
+									]
+								: []),
 							"-",
 							{
 								label: "About",

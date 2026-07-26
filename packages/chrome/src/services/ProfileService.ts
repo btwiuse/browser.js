@@ -56,9 +56,22 @@ export class ProfileService extends Service {
 			this.globalhistory = data.globalhistory.map((state) =>
 				HistoryState.deserialize(state)
 			);
-			this.bookmarks = data.bookmarks.map((bookmark) =>
-				BookmarkEntry.deserialize(bookmark)
-			);
+			let migratedDefaultBookmark = false;
+			this.bookmarks = data.bookmarks.map((bookmark) => {
+				if (
+					bookmark.url === "https://developer.puter.com/" &&
+					bookmark.title === "Puter Developers"
+				) {
+					migratedDefaultBookmark = true;
+					return new BookmarkEntry({
+						url: new URL("https://gear.sh"),
+						title: "GearShell",
+						favicon: null,
+					});
+				}
+				return BookmarkEntry.deserialize(bookmark);
+			});
+			if (migratedDefaultBookmark) this.markDirty();
 		} else {
 			this.globalhistory = [];
 			this.bookmarks = [
@@ -73,9 +86,9 @@ export class ProfileService extends Service {
 					favicon: "https://www.youtube.com/favicon.ico",
 				}),
 				new BookmarkEntry({
-					url: new URL("https://developer.puter.com"),
-					title: "Puter Developers",
-					favicon: "https://developer.puter.com/favicons/favicon-16x16.png",
+					url: new URL("https://gear.sh"),
+					title: "GearShell",
+					favicon: null,
 				}),
 			];
 		}
