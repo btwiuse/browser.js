@@ -12,6 +12,7 @@ FROM node:22 AS builder
 WORKDIR /app
 COPY . .
 COPY --from=rewriter-builder /app/packages/scramjet/packages/core/dist/scramjet.wasm packages/scramjet/packages/core/dist/scramjet.wasm
+COPY --from=rewriter-builder /app/packages/scramjet/packages/core/rewriter/wasm/out packages/scramjet/packages/core/rewriter/wasm/out
 RUN git clone https://github.com/MercuryWorkshop/dreamlandjs.git external/dreamlandjs
 COPY dreamland.patch /tmp/dreamland.patch
 RUN cd external/dreamlandjs && git apply /tmp/dreamland.patch
