@@ -27,7 +27,12 @@
 		},
 		"patchedDependencies": {
 			"htmlparser2@12.0.0": "packages/scramjet/patches/htmlparser2@12.0.0.patch"
-		}
+		},
+		"ignoredBuiltDependencies": [
+			"bufferutil",
+			"core-js",
+			"esbuild"
+		]
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.3.5",
