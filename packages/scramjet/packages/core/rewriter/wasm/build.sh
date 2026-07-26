@@ -22,10 +22,17 @@ if [ -f out/.build-hash ] && [ -f ../../dist/scramjet.wasm ] && [ "$SRC_HASH" !=
   exit 0
 fi
 
-which cargo wasm-bindgen wasm-opt wasm-snip &> /dev/null || {
-	echo "Please install cargo, wasm-bindgen, wasm-opt from https://github.com/WebAssembly/binaryen, and wasm-snip from https://github.com/r58playz/wasm-snip!"
-	exit 1
-}
+if [ "${RELEASE:-0}" = "1" ]; then
+	which cargo wasm-bindgen wasm-opt wasm-snip &> /dev/null || {
+		echo "Please install cargo, wasm-bindgen, wasm-opt from https://github.com/WebAssembly/binaryen, and wasm-snip from https://github.com/r58playz/wasm-snip!"
+		exit 1
+	}
+else
+	which cargo wasm-bindgen wasm-snip &> /dev/null || {
+		echo "Please install cargo, wasm-bindgen, and wasm-snip!"
+		exit 1
+	}
+fi
 
 WBG="wasm-bindgen 0.2.105"
 if ! [[ "$(wasm-bindgen -V)" =~ ^"$WBG" ]]; then
