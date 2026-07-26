@@ -19,8 +19,8 @@ RUN cd external/dreamlandjs && git apply /tmp/dreamland.patch
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install
 RUN pnpm build
-RUN VITE_ISOLATION_ORIGIN=. VITE_WISP_URL=/wisp/ pnpm build:dreamland
-RUN VITE_ISOLATION_ORIGIN=. VITE_WISP_URL=/wisp/ pnpm build:chrome
+RUN VITE_WISP_URL=/wisp/ pnpm build:dreamland
+RUN VITE_WISP_URL=/wisp/ pnpm build:chrome
 RUN mkdir -p public && cp -r packages/chrome/dist/* public/
 
 # Stage 3: Runtime
