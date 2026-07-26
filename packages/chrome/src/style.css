@@ -24,9 +24,10 @@ body.sidebar-right #app.vertical-tabs {
 }
 
 @media (display-mode: window-controls-overlay) {
-	/* Window Controls Overlay: keep native window controls clear of the app tab bar. */
+	/* Values are updated from the actual Window Controls Overlay geometry. */
 	#tabstrip:not(.inline) {
-		padding-right: calc(env(titlebar-area-width, 0px) + var(--space-sm));
+		padding-left: var(--window-controls-overlay-left, 0px);
+		padding-right: var(--window-controls-overlay-right, 0px);
 	}
 }
 

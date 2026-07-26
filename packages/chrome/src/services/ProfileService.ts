@@ -17,6 +17,9 @@ export type SerializedBookmarkEntry = {
 	favicon: string | null;
 };
 
+const GEAR_SHELL_URL = "https://gear.sh";
+const GEAR_SHELL_FAVICON = "https://gear.sh/favicon.ico";
+
 export class BookmarkEntry extends StatefulClass {
 	url!: URL;
 	title!: string;
@@ -64,9 +67,21 @@ export class ProfileService extends Service {
 				) {
 					migratedDefaultBookmark = true;
 					return new BookmarkEntry({
-						url: new URL("https://gear.sh"),
+						url: new URL(GEAR_SHELL_URL),
 						title: "GearShell",
-						favicon: null,
+						favicon: GEAR_SHELL_FAVICON,
+					});
+				}
+				if (
+					bookmark.url === "https://gear.sh/" &&
+					bookmark.title === "GearShell" &&
+					bookmark.favicon === null
+				) {
+					migratedDefaultBookmark = true;
+					return new BookmarkEntry({
+						url: new URL(GEAR_SHELL_URL),
+						title: "GearShell",
+						favicon: GEAR_SHELL_FAVICON,
 					});
 				}
 				return BookmarkEntry.deserialize(bookmark);
@@ -86,9 +101,9 @@ export class ProfileService extends Service {
 					favicon: "https://www.youtube.com/favicon.ico",
 				}),
 				new BookmarkEntry({
-					url: new URL("https://gear.sh"),
+					url: new URL(GEAR_SHELL_URL),
 					title: "GearShell",
-					favicon: null,
+					favicon: GEAR_SHELL_FAVICON,
 				}),
 			];
 		}
