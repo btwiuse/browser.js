@@ -22,8 +22,8 @@ const MIME_TYPES = {
 };
 
 async function serveStatic(reqUrl) {
-	let filePath = reqUrl === "/" ? "/index.html" : reqUrl;
-	const fullPath = path.join(PUBLIC_ROOT, filePath);
+	const cleanUrl = reqUrl === "/" ? "/index.html" : reqUrl;
+	const fullPath = path.join(PUBLIC_ROOT, cleanUrl.replace(/^\//, ""));
 
 	try {
 		await fs.access(fullPath);
