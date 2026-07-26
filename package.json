@@ -10,7 +10,6 @@
 	"scripts": {
 		"build": "rspack build",
 		"build:dreamland": "cd external/dreamlandjs && pnpm build",
-		"build:dreamland": "cd external/dreamlandjs && pnpm build",
 		"build:chrome": "cd packages/chrome && pnpm build",
 		"rewriter:build": "cd packages/scramjet/packages/core && pnpm run rewriter:build",
 		"dev": "node --no-warnings=ExperimentalWarning devserver.ts",
