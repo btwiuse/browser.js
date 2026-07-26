@@ -24,7 +24,6 @@ RUN pnpm build
 FROM node:22
 WORKDIR /app
 COPY --from=builder /app .
-RUN npm install @mercuryworkshop/wisp-js@0.4.1
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "wisp-server.js"]
