@@ -354,13 +354,16 @@ const createScramjetConfig = (options: ScramjetBuildConfig) => {
 			new rspack.DefinePlugin({
 				COMMITHASH: (() => {
 					try {
-						const hash = JSON.stringify(
-							execSync("git rev-parse --short HEAD", {
-								encoding: "utf-8",
-							}).replace(/\r?\n|\r/g, "")
-						);
-
-						return hash;
+						const hash =
+							process.env.COMMIT_HASH || process.env.RAILWAY_GIT_COMMIT_SHA;
+						if (hash) {
+							return JSON.stringify(hash.slice(0, 7));
+						}
+						const output = execSync("git rev-parse --short HEAD", {
+							encoding: "utf-8",
+							stdio: "pipe",
+						}).replace(/\r?\n|\r/g, "");
+						return JSON.stringify(output);
 					} catch {
 						return JSON.stringify("unknown");
 					}

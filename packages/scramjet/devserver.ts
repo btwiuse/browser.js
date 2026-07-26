@@ -19,12 +19,28 @@ import rspackConfig from "./rspack.config.ts";
 
 const image = await fs.readFile("./assets/scramjet-mini-noalpha.png");
 
-const commit = execSync("git rev-parse --short HEAD", {
-	encoding: "utf-8",
-}).replace(/\r?\n|\r/g, "");
-const branch = execSync("git rev-parse --abbrev-ref HEAD", {
-	encoding: "utf-8",
-}).replace(/\r?\n|\r/g, "");
+const commit = (() => {
+	try {
+		const hash = process.env.COMMIT_HASH || process.env.RAILWAY_GIT_COMMIT_SHA;
+		if (hash) return hash.slice(0, 7);
+		return execSync("git rev-parse --short HEAD", {
+			encoding: "utf-8",
+			stdio: "pipe",
+		}).replace(/\r?\n|\r/g, "");
+	} catch {
+		return "unknown";
+	}
+})();
+const branch = (() => {
+	try {
+		return execSync("git rev-parse --abbrev-ref HEAD", {
+			encoding: "utf-8",
+			stdio: "pipe",
+		}).replace(/\r?\n|\r/g, "");
+	} catch {
+		return "unknown";
+	}
+})();
 const packagejson = JSON.parse(await fs.readFile("./package.json", "utf-8"));
 const version = packagejson.version;
 
