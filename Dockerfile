@@ -19,11 +19,19 @@ RUN cd external/dreamlandjs && git apply /tmp/dreamland.patch
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install
 RUN pnpm build
+RUN VITE_WISP_URL=/wisp/ pnpm build:dreamland
+RUN VITE_WISP_URL=/wisp/ pnpm build:chrome
 
 # Stage 3: Runtime
 FROM node:22
 WORKDIR /app
-COPY --from=builder /app .
+COPY --from=builder /app/wisp-server.js ./wisp-server.js
+COPY --from=builder /app/packages/scramjet/packages/core/dist/ ./public/scram/
+COPY --from=builder /app/packages/scramjet/packages/controller/dist/ ./public/controller/
+COPY --from=builder /app/packages/scramjet/packages/utils/dist/ ./public/scram-utils/
+COPY --from=builder /app/packages/inject/dist/ ./public/
+COPY --from=builder /app/packages/sandbox/ ./public/sandbox/
+COPY --from=builder /app/packages/chrome/dist/ ./public/
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "wisp-server.js"]

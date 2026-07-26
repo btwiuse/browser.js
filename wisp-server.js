@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_ROOT = path.join(__dirname, "public");
 const PORT = Number(process.env.PORT || 3000);
+const WISP_PATH = process.env.WISP_PATH || "/";
 
 const MIME_TYPES = {
 	".js": "application/javascript; charset=utf-8",
@@ -68,9 +69,16 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.on("upgrade", (req, socket, head) => {
-	wisp.routeRequest(req, socket, head);
+	const reqUrl = req.url?.split("?")[0] ?? "/";
+	if (reqUrl.startsWith(WISP_PATH)) {
+		wisp.routeRequest(req, socket, head);
+	} else {
+		socket.destroy();
+	}
 });
 
 server.listen(PORT, () => {
 	console.log(`Wisp server listening on port ${PORT}`);
+	console.log(`UI: http://localhost:${PORT}/`);
+	console.log(`Wisp: ws://localhost:${PORT}${WISP_PATH}`);
 });
