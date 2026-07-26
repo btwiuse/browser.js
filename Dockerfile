@@ -12,6 +12,7 @@ FROM node:22 AS builder
 WORKDIR /app
 COPY . .
 COPY --from=rewriter-builder /app/packages/scramjet/packages/core/dist/scramjet.wasm packages/scramjet/packages/core/dist/scramjet.wasm
+RUN git submodule update --init --recursive
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install
 RUN pnpm build
