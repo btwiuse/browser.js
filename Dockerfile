@@ -1,6 +1,7 @@
 # Stage 1: Build rewriter with Rust
 FROM rust:latest AS rewriter-builder
 WORKDIR /app
+RUN rustup component add rust-src --toolchain nightly
 COPY . .
 RUN cargo install wasm-bindgen-cli --version 0.2.105
 RUN cargo install --git https://github.com/r58Playz/wasm-snip.git wasm-snip
