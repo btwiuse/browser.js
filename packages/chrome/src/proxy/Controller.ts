@@ -1,4 +1,4 @@
-import { basePrefix, isIsolated } from ".";
+import { basePrefix, isIsolated, isolationOrigin } from ".";
 import type {
 	Controllerbound,
 	SWbound,
@@ -219,9 +219,6 @@ function hashDomain(domain: string): string {
 
 let nonIsolatedController: Controller | null;
 
-const ISOLATION_ORIGIN =
-	import.meta.env.VITE_ISOLATION_ORIGIN || window.location.origin;
-
 let controllerWaitPromises: Map<Window, (v: unknown) => void> = new Map();
 addEventListener("message", (e) => {
 	if (typeof e.data !== "object" || e.data === null) return;
@@ -280,7 +277,7 @@ export async function controllerForURL(url: URL): Promise<Controller> {
 		});
 		if (existing) return existing;
 
-		let originurl = new URL(ISOLATION_ORIGIN);
+		let originurl = new URL(isolationOrigin);
 		let baseurl = new URL(
 			`${originurl.protocol}//${hashDomain(getRootDomain(url))}.${originurl.host}`
 		);

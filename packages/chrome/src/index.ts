@@ -8,6 +8,13 @@ import "./style.css";
 import.meta.hot?.accept(() => location.reload());
 
 import { setWispUrl } from "./proxy/wisp.ts";
+import { setIsolationOrigin } from "./proxy/index.ts";
+import {
+	defaultIsolationOrigin,
+	defaultWispUrl,
+	normalizeIsolationOrigin,
+	normalizeWispUrl,
+} from "./proxy/config.ts";
 
 import { ProfileService } from "./services/ProfileService.ts";
 import { SettingsService } from "./services/SettingsService.ts";
@@ -28,19 +35,43 @@ export let settingsService: SettingsService;
 export let tabsService: TabsService;
 export let downloadsService: DownloadsService;
 export let faviconService: FaviconService;
+export let saveSettings: () => Promise<void> = async () => {};
 
 if (import.meta.env.VITE_PUTER_BRANDING) {
 	if (!puter.auth.isSignedIn()) {
 		await puter.auth.signIn();
 	}
-
-	let wisp = await puter.net.generateWispV1URL();
-	setWispUrl(wisp);
-} else {
-	setWispUrl(import.meta.env.VITE_WISP_URL);
 }
 
 await loadServices();
+
+const configuredWispUrl = (() => {
+	try {
+		return normalizeWispUrl(settingsService.settings.wispUrl);
+	} catch (error) {
+		console.error("Ignoring invalid saved Wisp URL:", error);
+		return null;
+	}
+})();
+const configuredIsolationOrigin = (() => {
+	try {
+		return normalizeIsolationOrigin(settingsService.settings.isolationOrigin);
+	} catch (error) {
+		console.error("Ignoring invalid saved isolation origin:", error);
+		return null;
+	}
+})();
+
+setIsolationOrigin(configuredIsolationOrigin || defaultIsolationOrigin);
+
+let wispUrl = configuredWispUrl || defaultWispUrl;
+if (!wispUrl && import.meta.env.VITE_PUTER_BRANDING) {
+	wispUrl = await puter.net.generateWispV1URL();
+}
+if (!wispUrl) {
+	throw new Error("No Wisp URL configured.");
+}
+await setWispUrl(wispUrl);
 
 type ProfileMetadata = {
 	id: string;
@@ -82,6 +113,8 @@ function registerSave(service: Service, kv: KVWrapper, key: string) {
 			void flush();
 		}
 	});
+
+	return flush;
 }
 
 async function loadServices() {
@@ -112,7 +145,7 @@ async function loadServices() {
 		await kv.set("version", STORAGE_VERSION);
 
 		settingsService = new SettingsService(await kv.get("settings"));
-		registerSave(settingsService, kv, "settings");
+		saveSettings = registerSave(settingsService, kv, "settings");
 		faviconService = new FaviconService(await kv.get("faviconCache"));
 		registerSave(faviconService, kv, "faviconCache");
 

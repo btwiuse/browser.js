@@ -1,3 +1,11 @@
+import { defaultIsolationOrigin } from "./config";
+
 export const basePrefix = "/~/sj/";
 
-export let isIsolated = import.meta.env.VITE_ISOLATION_ORIGIN !== "none";
+export let isolationOrigin = defaultIsolationOrigin;
+export let isIsolated = isolationOrigin !== "none";
+
+export function setIsolationOrigin(origin: string) {
+	isolationOrigin = origin;
+	isIsolated = origin !== "none";
+}

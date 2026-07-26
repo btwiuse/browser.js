@@ -24,6 +24,8 @@ export type Settings = {
 	clearHistoryOnExit: boolean;
 	doNotTrack: boolean;
 	extensionsDevMode: boolean;
+	wispUrl: string;
+	isolationOrigin: string;
 };
 
 export type TabLayoutMode = Settings["tabLayout"];
@@ -44,6 +46,8 @@ const DEFAULT_SETTINGS: Settings = {
 	clearHistoryOnExit: false,
 	doNotTrack: true,
 	extensionsDevMode: false,
+	wispUrl: "",
+	isolationOrigin: "",
 };
 
 export type SettingsServiceState = {
@@ -63,6 +67,8 @@ export type SettingsServiceState = {
 		clearHistoryOnExit: boolean;
 		doNotTrack: boolean;
 		extensionsDevMode: boolean;
+		wispUrl: string;
+		isolationOrigin: string;
 	};
 };
 
@@ -72,7 +78,7 @@ export class SettingsService extends Service {
 	constructor(data: SettingsServiceState | null) {
 		super();
 		if (data) {
-			this.settings = createState(data.settings);
+			this.settings = createState({ ...DEFAULT_SETTINGS, ...data.settings });
 		} else {
 			this.settings = createState(DEFAULT_SETTINGS);
 		}
@@ -102,6 +108,8 @@ export class SettingsService extends Service {
 				clearHistoryOnExit: this.settings.clearHistoryOnExit,
 				doNotTrack: this.settings.doNotTrack,
 				extensionsDevMode: this.settings.extensionsDevMode,
+				wispUrl: this.settings.wispUrl,
+				isolationOrigin: this.settings.isolationOrigin,
 			},
 		};
 	}

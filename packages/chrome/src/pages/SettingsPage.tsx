@@ -26,7 +26,8 @@ import {
 	iconMore,
 	iconRefresh,
 } from "../icons";
-import { settingsService } from "..";
+import { saveSettings, settingsService } from "..";
+import { normalizeIsolationOrigin, normalizeWispUrl } from "../proxy/config";
 
 function ThemePreview(this: FC<{ theme: (typeof THEMES)[number] }>) {
 	const theme = this.theme;
@@ -668,9 +669,45 @@ LayoutPreview.style = css`
 `;
 
 export function SettingsPage(
-	this: FC<{ tab: Tab; selected: string }, { searchQuery: string }>
+	this: FC<
+		{ tab: Tab; selected: string },
+		{
+			searchQuery: string;
+			wispUrl: string;
+			isolationOrigin: string;
+			connectionError: string | null;
+		}
+	>
 ) {
 	this.searchQuery = "";
+	this.wispUrl = settingsService.settings.wispUrl;
+	this.isolationOrigin = settingsService.settings.isolationOrigin;
+	this.connectionError = null;
+
+	const applyConnectionSettings = async () => {
+		try {
+			const wispUrl = normalizeWispUrl(this.wispUrl);
+			const isolationOrigin = normalizeIsolationOrigin(this.isolationOrigin);
+			settingsService.settings.wispUrl = wispUrl || "";
+			settingsService.settings.isolationOrigin = isolationOrigin || "";
+			await saveSettings();
+			location.reload();
+		} catch (error) {
+			this.connectionError =
+				error instanceof Error
+					? error.message
+					: "Unable to save connection settings.";
+		}
+	};
+	const resetConnectionSettings = async () => {
+		this.wispUrl = "";
+		this.isolationOrigin = "";
+		this.connectionError = null;
+		settingsService.settings.wispUrl = "";
+		settingsService.settings.isolationOrigin = "";
+		await saveSettings();
+		location.reload();
+	};
 
 	const button = (id: string, icon: IconifyIcon, name: string) => {
 		return (
@@ -701,6 +738,7 @@ export function SettingsPage(
 					{button("general", iconSettings, "General")}
 					{button("appearance", iconBrush, "Appearance")}
 					{button("search", iconSearch, "Search")}
+					{button("network", iconOptions, "Network")}
 					{button("privacy", iconPrivacy, "Privacy & Security")}
 					{/* {button("extensions", iconExtension, "Extensions")} */}
 					{button("about", iconAbout, "About")}
@@ -1165,6 +1203,71 @@ export function SettingsPage(
 												<label for="search-suggestions">
 													Show search and site suggestions in the address bar
 												</label>
+											</div>
+										</div>
+									</div>
+								</section>
+							</div>
+						) : null
+					)}
+
+					{/* Network Tab */}
+					{use(this.selected).map((selected) =>
+						selected === "network" ? (
+							<div class="settings-tab">
+								<section class="setting-section">
+									<div class="section-header">
+										<h2>Proxy Connection</h2>
+										<p class="description">
+											Override this deployment&apos;s proxy endpoints. Leave a
+											field empty to use its build-time default.
+										</p>
+									</div>
+									<div class="section-content">
+										<div class="setting-group connection-fields">
+											<Input
+												label="Wisp WebSocket URL"
+												placeholder="wss://proxy.example.com/wisp/"
+												value={use(this.wispUrl)}
+												on:input={(event) => {
+													this.wispUrl = (
+														event.target as HTMLInputElement
+													).value;
+												}}
+											/>
+											<Input
+												label="Isolation origin"
+												placeholder="none or https://isolation.example.com"
+												value={use(this.isolationOrigin)}
+												on:input={(event) => {
+													this.isolationOrigin = (
+														event.target as HTMLInputElement
+													).value;
+												}}
+											/>
+											<p class="setting-hint">
+												Use <code>none</code> for same-origin mode. Any other
+												isolation origin needs a compatible sandbox deployment
+												with wildcard TLS.
+											</p>
+											{use(this.connectionError).and((message) => (
+												<p class="connection-error" role="alert">
+													{message}
+												</p>
+											))}
+											<div class="connection-actions">
+												<Button
+													variant="primary"
+													on:click={applyConnectionSettings}
+												>
+													Save and reload
+												</Button>
+												<Button
+													variant="secondary"
+													on:click={resetConnectionSettings}
+												>
+													Use deployment defaults
+												</Button>
 											</div>
 										</div>
 									</div>
@@ -1712,6 +1815,25 @@ SettingsPage.style = css`
 		margin: 0.25rem 0 0;
 		font-size: 0.85rem;
 		color: var(--ntp-text-60);
+	}
+
+	.connection-fields {
+		display: flex;
+		max-width: 38rem;
+		flex-direction: column;
+		gap: var(--space-lg);
+	}
+
+	.connection-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-md);
+	}
+
+	.connection-error {
+		margin: 0;
+		color: #c93737;
+		font-size: 0.9rem;
 	}
 
 	.zoom-control {
