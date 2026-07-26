@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_ROOT = path.join(__dirname, "public");
 const PORT = Number(process.env.PORT || 3000);
-const WISP_PATH = process.env.WISP_PATH || "/";
+const WISP_PATH = process.env.WISP_PATH || "/wisp/";
 
 const MIME_TYPES = {
 	".js": "application/javascript; charset=utf-8",
@@ -21,7 +21,7 @@ const MIME_TYPES = {
 	".ico": "image/x-icon",
 };
 
-async function serveStatic(reqUrl) {
+async function serveStatic(reqUrl, res) {
 	const cleanUrl = reqUrl === "/" ? "/index.html" : reqUrl;
 	const fullPath = path.join(PUBLIC_ROOT, cleanUrl.replace(/^\//, ""));
 
@@ -61,7 +61,7 @@ const server = http.createServer(async (req, res) => {
 		res.end("Method Not Allowed");
 		return;
 	}
-	const handled = await serveStatic(reqUrl);
+	const handled = await serveStatic(reqUrl, res);
 	if (!handled) {
 		res.writeHead(404);
 		res.end("Not Found");
