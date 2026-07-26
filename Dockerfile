@@ -25,13 +25,7 @@ RUN VITE_WISP_URL=/wisp/ pnpm build:chrome
 # Stage 3: Runtime
 FROM node:22
 WORKDIR /app
-COPY --from=builder /app/wisp-server.js ./wisp-server.js
-COPY --from=builder /app/packages/scramjet/packages/core/dist/ ./public/scram/
-COPY --from=builder /app/packages/scramjet/packages/controller/dist/ ./public/controller/
-COPY --from=builder /app/packages/scramjet/packages/utils/dist/ ./public/scram-utils/
-COPY --from=builder /app/packages/inject/dist/ ./public/
-COPY --from=builder /app/packages/sandbox/ ./public/sandbox/
-COPY --from=builder /app/packages/chrome/dist/ ./public/
+COPY --from=builder /app .
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "wisp-server.js"]
