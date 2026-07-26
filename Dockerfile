@@ -21,6 +21,7 @@ RUN pnpm install
 RUN pnpm build
 RUN VITE_WISP_URL=/wisp/ pnpm build:dreamland
 RUN VITE_WISP_URL=/wisp/ pnpm build:chrome
+RUN mkdir -p public && cp -r packages/chrome/dist/* public/
 
 # Stage 3: Runtime
 FROM node:22
