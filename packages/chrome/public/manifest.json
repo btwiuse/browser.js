@@ -5,6 +5,7 @@
 	"description": "A browser interface powered by Browser.js.",
 	"start_url": "./",
 	"scope": "./",
+	"display_override": ["window-controls-overlay", "standalone"],
 	"display": "standalone",
 	"background_color": "#ffffff",
 	"theme_color": "#3e9ee8",

@@ -23,6 +23,13 @@ body.sidebar-right #app.vertical-tabs {
 	flex-direction: column-reverse;
 }
 
+@media (display-mode: window-controls-overlay) {
+	/* Window Controls Overlay: keep native window controls clear of the app tab bar. */
+	#tabstrip:not(.inline) {
+		padding-right: calc(env(titlebar-area-width, 0px) + var(--space-sm));
+	}
+}
+
 /* #app.layout-bottom #main {
 	flex-direction: column-reverse;
 } */
