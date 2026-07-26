@@ -7,7 +7,6 @@ packages:
   - "packages/devtools"
   - "packages/sandbox"
   - "packages/inject"
-  - "external/dreamlandjs"
   - "packages/scramjet"
   - "packages/scramjet/packages/core"
   - "packages/scramjet/packages/bootstrap"

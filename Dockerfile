@@ -11,7 +11,6 @@ RUN cd packages/scramjet/packages/core/rewriter/wasm && bash build.sh
 FROM node:22 AS builder
 WORKDIR /app
 COPY . .
-RUN git submodule update --init --recursive
 COPY --from=rewriter-builder /app/packages/scramjet/packages/core/dist/scramjet.wasm packages/scramjet/packages/core/dist/scramjet.wasm
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install
