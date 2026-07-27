@@ -37,6 +37,21 @@ See [CONTRIBUTING.md](/CONTRIBUTING.md) for build instructions
 
 <br>
 
+## Publish the static Chrome UI
+
+With a checkout of `btwiuse/browser.gear.sh` next to this repository, run:
+
+```bash
+pnpm publish:browser-gear
+```
+
+This builds the same Chrome UI as the Docker image, using the production Wisp
+endpoint, and mirrors it to `../browser.gear.sh`. The script verifies the PWA
+settings and refuses to overwrite uncommitted static-site changes. It
+deliberately leaves review, commit, and push to you.
+
+<br>
+
 ## Support
 
 Connect with the maintainers and community through these channels:
