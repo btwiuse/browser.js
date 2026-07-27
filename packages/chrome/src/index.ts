@@ -26,6 +26,8 @@ import { FaviconService } from "./services/FaviconService.ts";
 import { KVWrapper } from "./services/KVWrapper.ts";
 import { migrate } from "./migrations/index.ts";
 import { mount } from "./App.tsx";
+import { configureBrowserShortcuts } from "./keyboardShortcuts.ts";
+import { INTERNAL_URL_PROTOCOL } from "./consts.ts";
 
 export const isPuter =
 	import.meta.env.VITE_PUTER_BRANDING && puter.env == "app";
@@ -46,6 +48,22 @@ if (import.meta.env.VITE_PUTER_BRANDING) {
 }
 
 await loadServices();
+
+configureBrowserShortcuts({
+	closeActiveTab: () => tabsService.destroyTab(tabsService.activetab),
+	openNewTab: () =>
+		tabsService.newTab(new URL(`${INTERNAL_URL_PROTOCOL}//newtab`), true),
+	openNewWindow: () => {
+		const newWindow = window.open(
+			new URL("./", window.location.href),
+			"_blank",
+			"popup"
+		);
+		if (!newWindow) {
+			tabsService.newTab(new URL(`${INTERNAL_URL_PROTOCOL}//newtab`), true);
+		}
+	},
+});
 
 const configuredWispUrl = (() => {
 	try {

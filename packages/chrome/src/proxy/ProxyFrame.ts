@@ -1,4 +1,5 @@
 import { rewriteUrl } from "@mercuryworkshop/scramjet/bundled";
+import { installBrowserShortcuts } from "../keyboardShortcuts";
 import { Controller, controllerForURL } from "./Controller";
 
 export class ProxyFrame {
@@ -6,6 +7,14 @@ export class ProxyFrame {
 	controller: Controller | null = null;
 	constructor() {
 		this.frame = document.createElement("iframe");
+		this.frame.addEventListener("load", () => {
+			try {
+				const frameWindow = this.frame.contentWindow;
+				if (frameWindow) installBrowserShortcuts(frameWindow);
+			} catch {
+				// A custom isolation origin can make the proxy frame cross-origin.
+			}
+		});
 	}
 
 	async go(url: URL) {
