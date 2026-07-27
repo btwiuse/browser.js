@@ -257,6 +257,11 @@ export function Omnibar(
 								},
 								icon: iconSettings,
 							},
+							{
+								label: "Restart Proxy Network",
+								action: () => location.reload(),
+								icon: iconRefresh,
+							},
 							...(isPuter
 								? [
 										{
