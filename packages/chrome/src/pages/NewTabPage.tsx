@@ -44,6 +44,7 @@ function getTopSites(): TopSiteEntry[] {
 	) => {
 		if (!url || seen.has(url.origin) || topSites.length >= MAX_TOP_SITES)
 			return;
+		if (profileService.hiddenTopSiteOrigins.includes(url.origin)) return;
 
 		const cleanTitle = title?.trim() || trimUrl(url);
 		const displayTitle = getTopSiteTitle(title, url);
@@ -67,7 +68,10 @@ function getTopSites(): TopSiteEntry[] {
 }
 
 export function NewTabPage(this: FC<{ tab: Tab }>) {
-	const topSites = use(profileService.globalhistory).map(getTopSites);
+	const topSites = use(
+		profileService.globalhistory,
+		profileService.hiddenTopSiteOrigins
+	).map(getTopSites);
 
 	return (
 		<div>
@@ -105,7 +109,12 @@ export function NewTabPage(this: FC<{ tab: Tab }>) {
 				<section class="top-sites" aria-label="Favorites and frequent sites">
 					<ul class="top-sites-list">
 						{topSites.mapEach((entry) => (
-							<TopSiteButton entry={entry}></TopSiteButton>
+							<TopSiteButton
+								entry={entry}
+								onHideFromNewTab={() =>
+									profileService.hideTopSiteOrigin(entry.url.origin)
+								}
+							></TopSiteButton>
 						))}
 					</ul>
 				</section>

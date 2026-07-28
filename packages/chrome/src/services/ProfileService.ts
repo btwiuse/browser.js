@@ -7,6 +7,7 @@ import type { SerializedHistoryState } from "../Tab/History";
 
 export type ProfileServiceState = {
 	globalhistory: SerializedHistoryState[];
+	hiddenTopSiteOrigins?: string[];
 	bookmarks: SerializedBookmarkEntry[];
 	cookies: string;
 };
@@ -48,6 +49,7 @@ export class BookmarkEntry extends StatefulClass {
 
 export class ProfileService extends Service {
 	globalhistory: HistoryState[];
+	hiddenTopSiteOrigins: string[];
 	bookmarks: BookmarkEntry[];
 	cookieJar: CookieJar;
 
@@ -59,6 +61,7 @@ export class ProfileService extends Service {
 			this.globalhistory = data.globalhistory.map((state) =>
 				HistoryState.deserialize(state)
 			);
+			this.hiddenTopSiteOrigins = data.hiddenTopSiteOrigins ?? [];
 			let migratedDefaultBookmark = false;
 			this.bookmarks = data.bookmarks.map((bookmark) => {
 				if (
@@ -89,6 +92,7 @@ export class ProfileService extends Service {
 			if (migratedDefaultBookmark) this.markDirty();
 		} else {
 			this.globalhistory = [];
+			this.hiddenTopSiteOrigins = [];
 			this.bookmarks = [
 				new BookmarkEntry({
 					url: new URL("https://www.google.com"),
@@ -112,6 +116,7 @@ export class ProfileService extends Service {
 	serialize(): ProfileServiceState {
 		return {
 			globalhistory: this.globalhistory.map((state) => state.serialize()),
+			hiddenTopSiteOrigins: this.hiddenTopSiteOrigins,
 			bookmarks: this.bookmarks.map((bookmark) => bookmark.serialize()),
 			cookies: this.cookieJar.dump(),
 		};
@@ -119,5 +124,12 @@ export class ProfileService extends Service {
 
 	save(): ProfileServiceState {
 		return this.serialize();
+	}
+
+	hideTopSiteOrigin(origin: string) {
+		if (this.hiddenTopSiteOrigins.includes(origin)) return;
+
+		this.hiddenTopSiteOrigins = [...this.hiddenTopSiteOrigins, origin];
+		this.markDirty();
 	}
 }

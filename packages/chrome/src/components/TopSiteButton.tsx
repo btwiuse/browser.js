@@ -2,7 +2,7 @@ import { css, type FC } from "dreamland/core";
 import { createMenu } from "@components/Menu";
 import { Icon } from "@components/Icon";
 import { Favicon } from "@components/Favicon";
-import { iconLink, iconMore, iconOpen } from "../icons";
+import { iconLink, iconMore, iconOpen, iconTrash } from "../icons";
 import { tabsService } from "..";
 
 export type TopSiteEntry = {
@@ -13,7 +13,9 @@ export type TopSiteEntry = {
 	fallback: string;
 };
 
-export function TopSiteButton(this: FC<{ entry: TopSiteEntry }>) {
+export function TopSiteButton(
+	this: FC<{ entry: TopSiteEntry; onHideFromNewTab: () => void }>
+) {
 	const openMenu = (event: MouseEvent) => {
 		createMenu({ left: event.clientX, top: event.clientY }, [
 			{
@@ -25,6 +27,12 @@ export function TopSiteButton(this: FC<{ entry: TopSiteEntry }>) {
 				label: "Open in New Tab",
 				icon: iconOpen,
 				action: () => tabsService.newTab(this.entry.url),
+			},
+			"-",
+			{
+				label: "Hide from New Tab",
+				icon: iconTrash,
+				action: this.onHideFromNewTab,
 			},
 		]);
 
