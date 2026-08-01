@@ -1412,7 +1412,7 @@ export function SettingsPage(
 										<div class="about-info">
 											<img
 												class="browser-logo"
-												src="/icon.png"
+												src={`${import.meta.env.BASE_URL}icon.png`}
 												alt="Browser.js Logo"
 											/>
 											<div class="browser-info">

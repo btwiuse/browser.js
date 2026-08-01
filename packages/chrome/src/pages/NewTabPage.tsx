@@ -76,7 +76,12 @@ export function NewTabPage(this: FC<{ tab: Tab }>) {
 	return (
 		<div>
 			<div class="logo">
-				<img src="/icon.png" alt="Browser.js Logo" width="56" height="56" />
+				<img
+					src={`${import.meta.env.BASE_URL}icon.png`}
+					alt="Browser.js Logo"
+					width="56"
+					height="56"
+				/>
 				<h1>Browser</h1>
 			</div>
 			<div class="topbar">

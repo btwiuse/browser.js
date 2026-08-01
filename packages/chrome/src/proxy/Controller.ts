@@ -242,7 +242,10 @@ async function registerLocalControllerSW(): Promise<ServiceWorkerRegistration> {
 
 	swRegistrationPromise = (async () => {
 		const registration = await navigator.serviceWorker.register(
-			"/localcontrollersw.js",
+			new URL(
+				"localcontrollersw.js",
+				new URL(import.meta.env.BASE_URL, location.origin)
+			),
 			{
 				scope: basePrefix,
 			}

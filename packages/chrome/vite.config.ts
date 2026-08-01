@@ -5,7 +5,13 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { jsxPlugin } from "dreamland/vite";
 
+const configuredBasePath = process.env.VITE_BASE_PATH || "/";
+const base = configuredBasePath.endsWith("/")
+	? configuredBasePath
+	: `${configuredBasePath}/`;
+
 export default defineConfig({
+	base,
 	plugins: [
 		process.env.VITE_SINGLEFILE ? viteSingleFile() : null,
 		// cssHmrPlugin(),
