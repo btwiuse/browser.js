@@ -24,8 +24,12 @@ export function Favicon(
 			// TODO: does this cause flickering?
 			this.url = defaultFaviconUrl;
 			faviconService.fetchFavicon(domain).then((favicon) => {
-				if (favicon?.iconUrl !== this.url)
-					this.url = favicon?.iconUrl || defaultFaviconUrl;
+				// The favicon service retrieves the image through the proxy and
+				// persists it as a data URL. Rendering the original remote URL here
+				// would issue an unproxied <img> request, which COEP correctly blocks
+				// when the remote response does not opt into cross-origin embedding.
+				const url = favicon?.iconData || defaultFaviconUrl;
+				if (url !== this.url) this.url = url;
 			});
 		} else {
 			if (this.url !== defaultFaviconUrl) this.url = defaultFaviconUrl;
