@@ -12,6 +12,7 @@
 		"build:dreamland": "cd external/dreamlandjs && pnpm build",
 		"build:chrome": "cd packages/chrome && pnpm build",
 		"publish:browser-gear": "bash scripts/publish-browser-gear.sh",
+		"publish:gear-shell-browser": "bash scripts/publish-gear-shell-browser.sh",
 		"rewriter:build": "cd packages/scramjet/packages/core && pnpm run rewriter:build",
 		"dev": "node --no-warnings=ExperimentalWarning devserver.ts",
 		"eslint": "node scripts/eslint-cli.mjs",

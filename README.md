@@ -39,16 +39,34 @@ See [CONTRIBUTING.md](/CONTRIBUTING.md) for build instructions
 
 ## Publish the static Chrome UI
 
-With a checkout of `btwiuse/browser.gear.sh` next to this repository, run:
+The reusable publisher is `scripts/publish-static-chrome.sh`. It accepts a
+target directory and build parameters, so it is not tied to a particular
+deployment target. For the two maintained targets, use:
 
 ```bash
+# Standalone browser.gear.sh
 pnpm publish:browser-gear
+
+# Gear Shell's /browser/ static subpath
+pnpm publish:gear-shell-browser
 ```
 
-This builds the same Chrome UI as the Docker image, using the production Wisp
-endpoint, and mirrors it to `../browser.gear.sh`. The script verifies the PWA
-settings and refuses to overwrite uncommitted static-site changes. It
-deliberately leaves review, commit, and push to you.
+The target-specific commands can be redirected to another checkout with
+`BROWSER_GEAR_DIR` or `GEAR_BROWSER_DIR`. For a custom target, invoke the
+generic tool directly:
+
+```bash
+bash scripts/publish-static-chrome.sh \
+  --target-dir ../some-static-site \
+  --base-path /browser/ \
+  --isolation-origin https://greggang.com \
+  --wisp-url wss://browserjs-production.up.railway.app/wisp/
+```
+
+Each command builds the runtime and Chrome UI, synchronizes the static files,
+verifies the PWA settings, and refuses to overwrite uncommitted target changes.
+The Gear Shell command preserves its deployment README. Both deliberately leave
+review, commit, and push to you.
 
 <br>
 
