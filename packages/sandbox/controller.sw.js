@@ -1,7 +1,7 @@
 var $scramjetController;
 (() => {
 	var e = {
-			805(e, t, r) {
+			470: function (e, t, r) {
 				r.d(t, { C: () => o });
 				class o {
 					methods;
@@ -99,7 +99,7 @@ var $scramjetController;
 	var o = {};
 	((() => {
 		(r.r(o), r.d(o, { route: () => a, shouldRoute: () => n }));
-		var e = r(805);
+		var e = r(470);
 		let t = {};
 		addEventListener("message", (e) => {
 			if (e.data && "object" == typeof e.data) {
@@ -227,12 +227,17 @@ var $scramjetController;
 							e.request.body instanceof ArrayBuffer
 							? [e.request.body]
 							: void 0
-					);
-				return new Response(n.body, {
-					status: n.status,
-					statusText: n.statusText,
-					headers: n.headers,
-				});
+					),
+					a = new Headers(n.headers);
+				return (
+					a.set("Cross-Origin-Embedder-Policy", "require-corp"),
+					a.set("Cross-Origin-Resource-Policy", "cross-origin"),
+					new Response(n.body, {
+						status: n.status,
+						statusText: n.statusText,
+						headers: a,
+					})
+				);
 			} catch (e) {
 				return (
 					console.error("Service Worker error:", e),

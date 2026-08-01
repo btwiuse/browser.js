@@ -194,10 +194,17 @@ export async function route(event: FetchEvent): Promise<Response> {
 				: undefined
 		);
 
+		const headers = new Headers(response.headers);
+		// Proxied resources are embedded by the cross-origin-isolated Browser.js
+		// shell. Upstream sites often omit these policies, which would make the
+		// browser block the response before it can render it.
+		headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+		headers.set("Cross-Origin-Resource-Policy", "cross-origin");
+
 		return new Response(response.body, {
 			status: response.status,
 			statusText: response.statusText,
-			headers: response.headers,
+			headers,
 		});
 	} catch (e) {
 		console.error("Service Worker error:", e);
